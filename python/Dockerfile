@@ -1,0 +1,18 @@
+ARG DEBIAN_VERSION=bookworm
+ARG UV_VERSION=latest
+ARG VARIANT=3.13
+
+
+FROM ghcr.io/astral-sh/uv:$UV_VERSION AS uv
+
+
+FROM python:$VARIANT-$DEBIAN_VERSION
+
+WORKDIR /app
+
+COPY --from=uv /uv /uvx /bin/
+
+ENV PYTHONDONTWRITEBYTECODE=True
+ENV PYTHONUNBUFFERED=True
+ENV UV_LINK_MODE=copy
+
