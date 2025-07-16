@@ -20,9 +20,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     cmake \
     clang-19 \
     clang-format-19 \
+    clang-tidy-19 \
     lldb-19 \
     llvm-19 \
     llvm-19-runtime \
+    python3-pip \
   && apt-get remove -y --autoremove \
     clang \
     clang-format \
@@ -31,7 +33,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     llvm-runtime \
   && ln -s /bin/clang-19 /bin/clang \
   && ln -s /bin/clang-format-19 /bin/clang-format \
-  && ln -s /bin/lldb-19 /bin/lldb
+  && ln -s /bin/lldb-19 /bin/lldb \
+  && ln -s /usr/bin/clang-tidy-19 /usr/bin/clang-tidy \
+  && python3 -m pip install --break-system-packages pre-commit \
+  # Support X11 Forwarding (specifically have xauth so X/GUI client
+  # apps can read the mounted/forwarded Xauthority file and parrot 
+  # back the secret token it contains to the X Server controlling the
+  # host display (monitors, keyboards, mouse, etc.)
+  && apt-get install -y xauth
 
 
 # [Optional] Uncomment this section to install additional vcpkg ports.

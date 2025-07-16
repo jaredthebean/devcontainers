@@ -4,10 +4,47 @@
 	"name": "C++",
 	"build": {
 		"dockerfile": "Dockerfile"
-	}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	"features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+        "version": "latest",
+        "moby": false
+    }
+  },
+	"containerEnv": {
+		"DISPLAY": "${localEnv:DISPLAY}",
+		"XAUTHORITY": "/tmp/.Xauthority"
+	},
+	"mounts": [
+		// Not stritctly necessary for X, but we mount tmpfs ourselves first as otherwise
+		// the docker-in-docker feature mounts tmpfs later hiding our /tmp/.Xauthority file
+		// and /tmp/.X11-unix directory.
+		{
+			"type": "tmpfs",
+			"target": "/tmp"
+		},
+		{
+			// The Xauthority file is used by X11 client apps
+			// via the "xauth" binary to retrieve the secret token needed to access
+			// a display.
+			"type": "bind",
+			"source": "${localEnv:XAUTHORITY}",
+			"target": "/tmp/.Xauthority"
+		},
+		{
+			"type": "bind",
+			// This directory is hardcoded in X11 libs for where it stores its
+			// display sockets.  We won't try and parse the current DISPLAY env
+			// variable to only mount the one socket we need and will mount the
+			// whole directory.  In a multi-user environment this could be
+			// problematic, but this is for single-user environments, so we
+			// shouldn't be exposing displays of one user to another here.
+			"source": "/tmp/.X11-unix",
+			"target": "/tmp/.X11-unix"
+		}
+	]
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
