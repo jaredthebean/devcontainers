@@ -1,0 +1,41 @@
+repos:
+  # Shell
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.12.0-1
+    hooks:
+      - id: shfmt
+  # Dockerfile
+  - repo: https://github.com/reteps/dockerfmt
+    # run `pre-commit autoupdate` to pin the version
+    rev: v0.3.7
+    hooks:
+      - id: dockerfmt
+        args:
+          # optional: add additional arguments here
+          - --indent=2
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+  # Markdown
+  - repo: https://github.com/akiomik/mado
+    rev: main
+    hooks:
+      - id: mado
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+  # JSON
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.2
+    hooks:
+      - id: check-jsonschema
+        files: devcontainer.json$
+        args:
+          - "--schemafile"
+          - "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json"
+          - "--force-filetype"
+          - "json5"
+        additional_dependencies: ['pyjson5']
+
